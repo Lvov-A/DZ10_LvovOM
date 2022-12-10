@@ -14,7 +14,7 @@ class Record():
 
     def __init__(self, name, phone_number=""):
         self.name = Name(name)
-        self.phone_number = [Phone(phone_number)]
+        self.phone_numbers = [Phone(phone_number)] if phone_number else [] 
     
     def add_phone_number(self, number):
         self.phone_number.append(Phone(number))
@@ -83,8 +83,8 @@ def show_phone(name):
         return res_phone.show_phone_number()
 
 @input_error
-def add_contact(name, phone):
-    if not name or not phone:
+def add_contact(name, phone=""):
+    if not name:
         raise ValueError("More arguments needed")
     else:
         user = Record(name, phone)
