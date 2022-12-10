@@ -12,26 +12,41 @@ class Phone(Field):
 
 class Record():
 
-    def __init__(self, name, phone_number):
+    def __init__(self, name, phone_number=""):
         self.name = Name(name)
-        self.phone_number = Phone([phone_number])
+        self.phone_number = [Phone(phone_number)]
     
     def add_phone_number(self, number):
-        self.phone_number.value.append(number)
+        self.phone_number.append(Phone(number))
     
     def delete_phone_number(self, number):
-        for i in self.phone_number.value:
-            if i == number:
-                self.phone_number.value.remove(number)
-
+       for i in self.phone_number:
+            if i.value == number:
+                self.phone_number.remove(i)
+    
     def change_phone_number(self, old_number, new_number):
         self.delete_phone_number(old_number)
         self.add_phone_number(new_number)
 
+    def show_phone_number(self):
+        list_phone_number = []
+        for i in self.phone_number:
+            list_phone_number.append(i.value)
+        return list_phone_number
+
 class AddressBook(UserDict):
 
+    def search(self, value):
+        return value in self.data.values()
+    
     def add_record(self, record):
         self.data[record.name.value] = record
+    
+    def all_show_phone_number(self):
+        all_cont = ""
+        for key, value in self.data.items():
+            all_cont += f"{key}: {value.show_phone_number()}\n"
+        return all_cont[:-1]
 
 def input_error(func):
     def wrapper(*args, **kwargs):
@@ -57,18 +72,15 @@ def parser(msg):
     return command, name, phone
 
 def show_all():
-    list_contacts = ""
-    for key, value in list_user.items():
-        list_contacts += f'{key} : {value.phone_number.value} \n'
-    return list_contacts[:-2]
+    return list_user.all_show_phone_number()
 
 @input_error
 def show_phone(name):
     res_phone = list_user.get(name)
-    if res_phone == None:
+    if res_phone is None:
         raise ValueError(f"Contact {name} not found")
     else:
-        return res_phone.phone_number.value
+        return res_phone.show_phone_number()
 
 @input_error
 def add_contact(name, phone):
